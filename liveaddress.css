@@ -1,0 +1,9 @@
+.liveaddress .suggestions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.suggestions .current {
+  background: #f9f9f9;
+}
