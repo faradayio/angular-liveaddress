@@ -43,7 +43,6 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
           },
           timeout: canceler
         }).success(function(data, status, headers, config){
-          console.log(data.suggestions);
           scope.suggestions = data.suggestions;
           scope.current = 0;
         }).error(function(data, status, headers, config){
