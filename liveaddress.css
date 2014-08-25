@@ -1,9 +1,67 @@
+body {
+  background: #f9f9f9;
+  font-family: sans-serif;
+}
+.main {
+  background: #fff;
+  width: 400px;
+  padding: 20px;
+  margin: 50px auto 0;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.2), 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+  font-family: inherit;
+  font-weight: normal;
+}
+h1 {
+  margin: 0 0 30px;
+}
+h2 {
+  margin: 15px 0;
+}
+
+.inputbox {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin: 0;
+  font: inherit;
+  outline: 0;
+  position: relative;
+  z-index: 2;
+}
+.inputbox:focus {
+  border-color: #888;
+}
+
+
+.liveaddress {
+    position: relative;
+}
+
 .liveaddress .suggestions {
   margin: 0;
-  padding: 0;
+  padding: 8px;
   list-style: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: #fff;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.2), 0 0 10px rgba(0,0,0,0.1);
+}
+
+.suggestions li {
+    padding: 2px 0;
+}
+.suggestions li:first-child {
+  padding-top: 0;
+}
+.suggestions li:last-child {
+  padding-bottom: 0;
 }
 
 .suggestions .current {
-  background: #f9f9f9;
+  text-decoration: underline;
 }

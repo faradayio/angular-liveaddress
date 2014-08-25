@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html ng-app="app">
+<html>
 <head>
   <title>Angular + Smartystreets</title>
   <link rel="stylesheet" type="text/css" href="liveaddress.css">
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.min.js"></script>
   <script type="text/javascript" src="liveaddress.js"></script>
-  <script type="text/javascript" src="app.js"></script>
 </head>
 
 <body>
 
-<h1>Angular + SmartyStreets</h1>
+<div ng-app="liveaddress" class="main">
 
-<h2>Step 1: Enter a token</h2>
+  <h1>Angular + SmartyStreets</h1>
 
-<input type="text" ng-model="token" placeholder="SmartyStreets html token" class="inputbox"/>
+  <h2>Step 1: Enter a token</h2>
+  <input type="text" ng-model="token" placeholder="SmartyStreets html token" class="inputbox"/>
 
-<h2>Step 2: Search for things</h2>
+  <h2>Step 2: Search for things</h2>
+  <div liveaddress token="token" ng-model="address" input-class="{inputbox:true}"></div>
 
-<div ng-controller="testCtrl">
-  <div liveaddress token="token" update="update" input-class="{inputbox:true}"></div>
+  <h2>Step 3: Get results</h2>
+  <pre>{{ address|json }}</pre>
+
 </div>
 
 </body>
