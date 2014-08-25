@@ -1,4 +1,4 @@
 angular-liveaddress
 ===================
 
-Use smartystreets to autocomplete address fields
+Use SmartyStreets to autocomplete address fields
