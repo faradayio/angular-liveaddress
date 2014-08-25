@@ -58,7 +58,9 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
       });
 
       scope.handleKeydown = function(e){
-        if (e.which == 38) {
+        if (e.which == 13) {
+          scope.handleBlur();
+        } else if (e.which == 38) {
           //up
           if (scope.current == 0) {
             scope.current = scope.suggestions.length-1;
