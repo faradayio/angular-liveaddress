@@ -7,8 +7,7 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
     replace: true,
     scope: {
       token: '=',
-      address: '=?',
-      update: '=?',
+      geocoded: '=?ngModel',
       inputClass: '=?'
     },
     link: function(scope, element, attrs){
@@ -16,6 +15,7 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
 
       scope.suggestions = [];
       scope.current = 0;
+      scope.geocoded = false;
 
       scope.$watch('address', function(newAddress, oldAddress){
         if (canceler) {
@@ -43,6 +43,7 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
           },
           timeout: canceler
         }).success(function(data, status, headers, config){
+          console.log(data.suggestions);
           scope.suggestions = data.suggestions;
           scope.current = 0;
         }).error(function(data, status, headers, config){
@@ -51,20 +52,8 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
         });
       });
 
-      var updateSuggestion = function(){
-        var current = scope.suggestions ? scope.suggestions[scope.current] : false;
-        if (current) {
-          scope.update && scope.update(current);
-        } else {
-          scope.address = '';
-          scope.update && scope.update(false);
-        }
-      };
-
-      scope.$watch('suggestions', updateSuggestion);
       scope.$watch('current', function(current, lastCurrent){
-        updateSuggestion();
-        if (scope.suggestions && (current || current != lastCurrent)) {
+        if (scope.suggestions && scope.suggestions[current] && (current || current != lastCurrent)) {
           scope.address = scope.suggestions[scope.current].text;
         }
       });
@@ -89,6 +78,30 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
         }
         e.preventDefault();
         return false;
+      };
+
+      scope.select = function(item){
+        scope.current = item;
+        scope.geocoded = scope.suggestions[scope.current] || false;
+      };
+
+      var ignoreBlur = false;
+
+      scope.handleBlur = function(){
+        if (ignoreBlur) {
+          ignoreBlur = false;
+        } else {
+          if (scope.suggestions[scope.current]) {
+            scope.geocoded = scope.suggestions[scope.current];
+            scope.address = scope.suggestions[scope.current].text;
+          } else {
+            scope.geocoded = false;
+          }
+        }
+      };
+
+      scope.ignoreNextBlur = function(){
+        ignoreBlur = true;
       };
     }
   };
