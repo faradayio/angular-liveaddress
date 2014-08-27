@@ -8,14 +8,16 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
     scope: {
       token: '=',
       geocoded: '=?ngModel',
+      selection: '=?',
       inputClass: '=?'
     },
     link: function(scope, element, attrs){
-      var canceler;
+      var canceler, geocodeCanceler;
 
       scope.suggestions = [];
       scope.current = 0;
       scope.geocoded = false;
+      scope.selection = false;
 
       scope.$watch('address', function(newAddress, oldAddress){
         if (canceler) {
@@ -25,6 +27,7 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
         if (scope.suggestions && scope.suggestions[scope.current] && scope.suggestions[scope.current].text == newAddress) {
           return;
         }
+        scope.geocoded = false;
 
         if (!newAddress) {
           scope.suggestions = [];
@@ -57,6 +60,28 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
         }
       });
 
+      scope.$watch('selection', function(selection){
+        if (!selection) return;
+        if (geocodeCanceler) {
+          geocodeCanceler.resolve();
+        }
+        geocodeCanceler = $q.defer();
+
+        $http({
+          method: 'GET',
+          url: 'https://api.smartystreets.com/street-address',
+          params: {
+            'auth-token': scope.token,
+            'street': selection.street_line,
+            'city': selection.city,
+            'state': selection.state
+          },
+          timeout: geocodeCanceler
+        }).success(function(data, status, headers, config){
+          scope.geocoded = data[0] || {error: 'noresults'};
+        });
+      });
+
       scope.handleKeydown = function(e){
         if (e.which == 13) {
           scope.handleBlur();
@@ -83,7 +108,7 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
 
       scope.select = function(item){
         scope.current = item;
-        scope.geocoded = scope.suggestions[scope.current] || false;
+        scope.selection = scope.suggestions[scope.current] || false;
       };
 
       var ignoreBlur = false;
@@ -93,10 +118,10 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
           ignoreBlur = false;
         } else {
           if (scope.suggestions[scope.current]) {
-            scope.geocoded = scope.suggestions[scope.current];
+            scope.selection = scope.suggestions[scope.current];
             scope.address = scope.suggestions[scope.current].text;
           } else {
-            scope.geocoded = false;
+            scope.selection = false;
           }
         }
       };
