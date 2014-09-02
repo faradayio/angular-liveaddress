@@ -1,9 +1,32 @@
 var liveaddress = angular.module('liveaddress', []);
 
+var hereDoc = function(f) {
+  return f.toString().
+    replace(/^[^\/]+\/\*!?/, '').
+    replace(/\*\/[^\/]+$/, '');
+};
+
+liveaddress.run(['$templateCache', function($templateCache) {
+  $templateCache.put('angular-liveaddress.html', hereDoc(function(){/*
+    <div class="liveaddress">
+      <input type="text" ng-model="address" ng-class="inputClass" ng-keydown="handleKeydown($event)" ng-blur="handleBlur()"/>
+      <ul class="suggestions" ng-show="!geocoded && suggestions">
+        <li
+          ng-repeat="(i, suggestion) in suggestions"
+          ng-class="{current: i == current}"
+          ng-click="select(i)"
+          ng-mousedown="ignoreNextBlur()"
+        >{{ suggestion.text }}</li>
+      </ul>
+    </div>
+  */})
+  );
+}]);
+
 liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
   return {
     restrict: 'A',
-    templateUrl: 'partial.html',
+    templateUrl: 'angular-liveaddress.html',
     replace: true,
     scope: {
       token: '=',
