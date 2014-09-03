@@ -32,7 +32,8 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
       token: '=',
       geocoded: '=?ngModel',
       selection: '=?',
-      inputClass: '=?'
+      inputClass: '=?',
+      update: '&?'
     },
     link: function(scope, element, attrs){
       var canceler, geocodeCanceler;
@@ -41,6 +42,11 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
       scope.current = 0;
       scope.geocoded = false;
       scope.selection = false;
+      if (scope.update) {
+        scope.$watch('address', function(newAddress){
+          scope.update({address: newAddress});
+        });
+      }
 
       scope.$watch('address', function(newAddress, oldAddress){
         if (canceler) {
