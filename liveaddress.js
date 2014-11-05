@@ -9,8 +9,8 @@ var hereDoc = function(f) {
 liveaddress.run(['$templateCache', function($templateCache) {
   $templateCache.put('angular-liveaddress.html', hereDoc(function(){/*
     <div class="liveaddress">
-      <input type="text" ng-model="address" ng-class="inputClass" ng-keydown="handleKeydown($event)" ng-blur="handleBlur()"/>
-      <ul class="suggestions" ng-show="!geocoded && suggestions">
+      <input type="text" ng-model="address" class="{{ inputClass }}" ng-class="{current: suggestions.length}" ng-keydown="handleKeydown($event)" ng-blur="handleBlur()"/>
+      <ul class="suggestions" ng-show="!geocoded && suggestions.length">
         <li
           ng-repeat="(i, suggestion) in suggestions"
           ng-class="{current: i == current}"
@@ -32,8 +32,9 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
       token: '=',
       geocoded: '=?ngModel',
       selection: '=?',
-      inputClass: '=?',
-      update: '&?'
+      inputClass: '@?',
+      update: '&?',
+      initial: '=?'
     },
     link: function(scope, element, attrs){
       var canceler, geocodeCanceler;
@@ -42,11 +43,17 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
       scope.current = 0;
       scope.geocoded = false;
       scope.selection = false;
+      if (scope.initial) {
+        scope.address = scope.initial;
+      }
       if (scope.update) {
-        scope.$watch('address', function(newAddress){
+        scope.$watch('geocoded', function(newAddress, previous){
+          if (newAddress == previous) return;
           scope.update({address: newAddress});
         });
       }
+
+      var foundInitialAddress = false;
 
       scope.$watch('address', function(newAddress, oldAddress){
         if (canceler) {
@@ -58,7 +65,8 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
         }
         scope.geocoded = false;
 
-        if (!newAddress) {
+        if (!newAddress || (scope.initial && newAddress == scope.initial && !foundInitialAddress)) {
+          foundInitialAddress = true;
           scope.suggestions = [];
           scope.current = 0;
           return;
