@@ -11,7 +11,7 @@ liveaddress.run(['$templateCache', function($templateCache) {
     '<div class="liveaddress">'+
       '<input type="text" ng-model="address" class="{{ inputClass }}" ng-class="{current: suggestions.length}" ng-keydown="handleKeydown($event)" ng-blur="handleBlur()"/>'+
       '<ul class="suggestions" ng-show="!geocoded && suggestions.length">'+
-        '<li'+
+        '<li '+
           'ng-repeat="(i, suggestion) in suggestions"'+
           'ng-class="{current: i == current}"'+
           'ng-click="select(i)"'+
@@ -145,6 +145,8 @@ liveaddress.directive('liveaddress', ['$http', '$q', function($http, $q){
       scope.select = function(item){
         scope.current = item;
         scope.selection = scope.suggestions[scope.current] || false;
+        if (scope.selection)
+          scope.address = scope.suggestions[scope.current].text;
       };
 
       var ignoreBlur = false;
